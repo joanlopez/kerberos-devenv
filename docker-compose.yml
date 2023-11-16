@@ -1,0 +1,9 @@
+version: '3'
+
+services:
+  # Kerberos Server (KDC)
+  kerberos-server:
+    build:
+      context: .
+      dockerfile: Dockerfile.server
+    hostname: kerberos.example.com
