@@ -1,0 +1,11 @@
+# Use Ubuntu LTS as base image
+FROM ubuntu:22.04
+
+# Update the package list
+RUN apt-get update
+
+# Install Kerberos user packages
+RUN apt-get install -y krb5-user
+
+# Copy the Kerberos configuration file
+COPY krb5.conf /etc/krb5.conf
