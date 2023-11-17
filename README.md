@@ -11,6 +11,9 @@ the Kerberos database and register some principals (user and service), ahd has [
 - `kerberos-client`: the Kerberos client, defined in [Dockerfile.client](Dockerfile.client), which also relies on
 [krb5.conf](krb5.conf) configuration, and has `krb5-user` packages installed, so you can use `kinit` and `klist` commands.
 It's configured to run endlessly (`tail -f /dev/null`), so you can `sh` into it to play with these commands.
+- `apache-server`: the HTTP service available at `http.example.com`, based on [Apache](https://httpd.apache.org/),
+defined in [Dockerfile.apache](Dockerfile.apache), which also relies on [krb5.conf](krb5.conf) configuration, and its 
+service is [configured to use Kerberos auth](apache-kerberos.conf), with credentials defined in [http.keytab](http.keytab).
 
 ## Usage
 
@@ -22,7 +25,8 @@ It's configured to run endlessly (`tail -f /dev/null`), so you can `sh` into it 
 
 - **Realm:** EXAMPLE.COM
 - **Domain:** example.com
-- **Example user:** testuser (_testpwd_)
+- **Example user principal:** testuser (_testpwd_)
+- **HTTP service principal:** HTTP/http.example.com (_httppwd_)
 
 ## FAQs
 
@@ -32,3 +36,21 @@ It's configured to run endlessly (`tail -f /dev/null`), so you can `sh` into it 
 2. Ask for a Kerberos ticket: `kinit testuser`
 3. Provide the password (`testpwd`), when asked
 4. Check the ticket: `klist`
+
+### How can I register a new user principal?
+
+1. Login to the Kerberos server container: `docker-compose exec kerberos-server sh`
+2. Run: `/usr/sbin/kadmin.local -q "add_principal -pw <your-password> -kvno 1 <your-username>"`
+    1. Find an example in the [krb5kdc-init.sh](krb5kdc-init.sh) script.
+
+### How can I register a new service principal?
+
+1. Login to the Kerberos server container: `docker-compose exec kerberos-server sh`
+2. Run: `/usr/sbin/kadmin.local -q "add_principal -pw <service-password> -kvno 1 <service-principal-name>"`
+    1. Find an example in the [krb5kdc-init.sh](krb5kdc-init.sh) script.
+ 
+### How can I generate a keytab file?
+
+1. Login to the Kerberos server container: `docker-compose exec kerberos-server sh`
+2. Run: `/usr/sbin/kadmin.local -q  "ktadd -norandkey -k <keytab-output-path> <service-principal-name>@<realm>"`
+   1. For instance: `/usr/sbin/kadmin.local -q  "ktadd -norandkey -k /tmp/http.keytab HTTP/http.example.com@EXAMPLE.COM"`
