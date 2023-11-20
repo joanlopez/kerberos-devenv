@@ -1,11 +1,9 @@
-# Use Ubuntu LTS as base image
-FROM ubuntu:22.04
-
-# Update the package list
-RUN apt-get update
+# Use Alpine as base image
+FROM alpine:3.18
 
 # Install Kerberos user packages
-RUN apt-get install -y krb5-user
+RUN apk update && \
+    apk add krb5
 
 # Copy the Kerberos configuration file
 COPY krb5.conf /etc/krb5.conf
