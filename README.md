@@ -64,3 +64,9 @@ so you can `sh` into it to play with these commands._
 1. Login to the Go application container: `docker-compose exec go-app sh`
 2. Run the binary: `./main`
    1. It should dump out a (successful) HTTP response of the Apache server.
+
+### How can I see the Kerberos server logs?
+
+1. Login to the Kerberos server container: `docker-compose exec kerberos-server sh`
+2. Explore the logs file: `/var/log/krb5kdc.log`
+   1. For instance: `cat /var/log/krb5kdc.log`
