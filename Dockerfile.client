@@ -1,7 +1,7 @@
 # Use Alpine as base image
 FROM alpine:3.18
 
-# Install Kerberos user packages
+# Install Kerberos packages
 RUN apk update && \
     apk add krb5
 
